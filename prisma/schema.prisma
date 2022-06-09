@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Pengguna {
+  id_pengguna Int         @id @default(autoincrement())
+  email       String      @db.VarChar(60)
+  nama        String?     @db.VarChar(40)
+  nik         String?     @db.VarChar(16)
+  alamat      String?     @db.VarChar(120)
+  hp          String?     @db.VarChar(20)
+  foto        String?     @db.VarChar(60)
+  kendaraan   Kendaraan[]
+  parkiran    Parkiran[]
+  pinjam      Pinjam[]
+}
+
+model Kendaraan {
+  id_kendaraan   Int      @id @default(autoincrement())
+  id_pengguna    Int
+  jenis          String   @db.VarChar(1)
+  nama           String   @db.VarChar(40)
+  merk           String   @db.VarChar(60)
+  warna          String   @db.VarChar(20)
+  no_registrasi  String   @db.VarChar(15)
+  no_rangka      String   @db.VarChar(60)
+  no_stnk        String   @db.VarChar(60)
+  foto_kendaraan String   @db.VarChar(60)
+  foto_stnk      String   @db.VarChar(60)
+  parkir         Parkir[]
+  pinjam         Pinjam[]
+  kendaraan      Pengguna @relation(fields: [id_pengguna], references: [id_pengguna])
+}
+
+model Parkiran {
+  id_parkiran Int          @id @default(autoincrement())
+  id_pengguna Int
+  nama        String       @db.VarChar(60)
+  alamat      String       @db.VarChar(60)
+  koordinat   String       @db.VarChar(80)
+  jam_buka    DateTime     @db.Time()
+  jam_tutup   DateTime     @db.Time()
+  foto        String       @db.VarChar(60)
+  parkir      Parkir[]
+  tarif       Tarif[]
+  partner     Partner[]
+  pengaturan  Pengaturan[]
+  parkiran    Pengguna     @relation(fields: [id_pengguna], references: [id_pengguna])
+}
+
+model Parkir {
+  id_parkir    BigInt    @id @default(autoincrement())
+  id_kendaraan Int
+  id_parkiran  Int
+  jam_masuk    DateTime  @db.Time()
+  jam_keluar   DateTime? @db.Time()
+  status       Boolean
+  kendaraan    Kendaraan @relation(fields: [id_kendaraan], references: [id_kendaraan])
+  parkir       Parkiran  @relation(fields: [id_parkiran], references: [id_parkiran])
+}
+
+model Tarif {
+  id_tarif     Int      @id @default(autoincrement())
+  id_parkiran  Int
+  sepeda_motor Float    @db.Double()
+  mobil        Float    @db.Double()
+  parkiran     Parkiran @relation(fields: [id_parkiran], references: [id_parkiran])
+}
+
+model Partner {
+  id_partner  Int      @id @default(autoincrement())
+  id_parkiran Int
+  id_user     Int
+  parkiran    Parkiran @relation(fields: [id_parkiran], references: [id_parkiran])
+}
+
+model Pengaturan {
+  id_pengaturan            Int      @id @default(autoincrement())
+  id_parkiran              Int
+  validasi_masuk           Boolean
+  validasi_keluar          Boolean
+  validasi_jam_operasional Boolean
+  parkiran                 Parkiran @relation(fields: [id_parkiran], references: [id_parkiran])
+}
+
+model Pinjam {
+  id_pinjam       Int       @id @default(autoincrement())
+  id_kendaraan    Int
+  id_pengguna     Int
+  tanggal_pinjam  DateTime
+  tanggal_kembali DateTime
+  status          Boolean
+  Pengguna        Pengguna  @relation(fields: [id_pengguna], references: [id_pengguna])
+  kendaraan       Kendaraan @relation(fields: [id_kendaraan], references: [id_kendaraan])
+}

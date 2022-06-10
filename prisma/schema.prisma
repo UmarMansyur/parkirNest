@@ -37,7 +37,7 @@ model Kendaraan {
   foto_stnk      String   @db.VarChar(60)
   parkir         Parkir[]
   pinjam         Pinjam[]
-  kendaraan      Pengguna @relation(fields: [id_pengguna], references: [id_pengguna])
+  kendaraan      Pengguna? @relation(fields: [id_pengguna], references: [id_pengguna])
 }
 
 model Parkiran {
@@ -53,7 +53,7 @@ model Parkiran {
   tarif       Tarif[]
   partner     Partner[]
   pengaturan  Pengaturan[]
-  parkiran    Pengguna     @relation(fields: [id_pengguna], references: [id_pengguna])
+  parkiran    Pengguna?    @relation(fields: [id_pengguna], references: [id_pengguna])
 }
 
 model Parkir {
@@ -63,8 +63,8 @@ model Parkir {
   jam_masuk    DateTime  @db.Time()
   jam_keluar   DateTime? @db.Time()
   status       Boolean
-  kendaraan    Kendaraan @relation(fields: [id_kendaraan], references: [id_kendaraan])
-  parkir       Parkiran  @relation(fields: [id_parkiran], references: [id_parkiran])
+  kendaraan    Kendaraan? @relation(fields: [id_kendaraan], references: [id_kendaraan])
+  parkir       Parkiran?  @relation(fields: [id_parkiran], references: [id_parkiran])
 }
 
 model Tarif {
@@ -72,14 +72,14 @@ model Tarif {
   id_parkiran  Int
   sepeda_motor Float    @db.Double()
   mobil        Float    @db.Double()
-  parkiran     Parkiran @relation(fields: [id_parkiran], references: [id_parkiran])
+  parkiran     Parkiran? @relation(fields: [id_parkiran], references: [id_parkiran])
 }
 
 model Partner {
   id_partner  Int      @id @default(autoincrement())
   id_parkiran Int
   id_user     Int
-  parkiran    Parkiran @relation(fields: [id_parkiran], references: [id_parkiran])
+  parkiran    Parkiran? @relation(fields: [id_parkiran], references: [id_parkiran])
 }
 
 model Pengaturan {
@@ -88,7 +88,7 @@ model Pengaturan {
   validasi_masuk           Boolean
   validasi_keluar          Boolean
   validasi_jam_operasional Boolean
-  parkiran                 Parkiran @relation(fields: [id_parkiran], references: [id_parkiran])
+  parkiran                 Parkiran? @relation(fields: [id_parkiran], references: [id_parkiran])
 }
 
 model Pinjam {
@@ -98,6 +98,6 @@ model Pinjam {
   tanggal_pinjam  DateTime
   tanggal_kembali DateTime
   status          Boolean
-  Pengguna        Pengguna  @relation(fields: [id_pengguna], references: [id_pengguna])
-  kendaraan       Kendaraan @relation(fields: [id_kendaraan], references: [id_kendaraan])
+  Pengguna        Pengguna?  @relation(fields: [id_pengguna], references: [id_pengguna])
+  kendaraan       Kendaraan? @relation(fields: [id_kendaraan], references: [id_kendaraan])
 }
